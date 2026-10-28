@@ -151,6 +151,7 @@ Actions 在源、脚本或测试改变时运行相同校验：JSON 语法、重�
 ## 常见问题与失败恢复
 
 - **未安装命令 / 未登录 / 无权限**：检查环境、`gh auth status` 和账号的仓库写权限。不要把 Token 写入脚本、JSON、命令示例或仓库。
+- **Git 连接 GitHub 超时**：macOS 的系统代理不会自动被命令行 Git 使用。当前发布目录已按本机现有代理设置了仅对该仓库生效的 `http.https://github.com.proxy=http://127.0.0.1:7897`，此配置在本地 `.git/config`，不进入 Git 历史。代理停用或换端口时，相应调整本仓库配置；不再需要时执行 `git config --local --unset http.https://github.com.proxy`。其他电脑请按自己的网络配置，不要盲目复制此端口。
 - **工作区不干净**：先检查 `git status`、保存并提交自己的改动。工具不会 stash、重置或覆盖。输入 IPA 建议放在 Downloads；`.gitignore` 也会忽略 `*.ipa`。
 - **本地与远端不一致**：先处理 `git fetch origin main`、本地未推送提交或远端更新，确认一致后重试；工具不自动合并和强推。
 - **重复 Tag / 版本过旧**：默认停止。发布真正的新版本应提高 IPA 营销版本，而非覆盖旧 IPA 或改 JSON 中的版本号。
