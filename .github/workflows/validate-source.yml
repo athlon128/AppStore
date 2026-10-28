@@ -1,0 +1,38 @@
+name: Validate SideStore source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - source.json
+      - scripts/**
+      - tests/**
+      - .github/workflows/validate-source.yml
+  pull_request:
+    paths:
+      - source.json
+      - scripts/**
+      - tests/**
+      - .github/workflows/validate-source.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.13'
+      - name: Validate source against pinned SideStore schema and publishing rules
+        run: python3 scripts/validate_source.py source.json
+      - name: Check shell syntax
+        run: bash -n scripts/upload-ipa.sh
+      - name: Test IPA metadata, updates and failure recovery locally
+        run: python3 -m unittest discover -s tests -v

@@ -1,0 +1,11 @@
+*.ipa
+*.IPA
+*.p12
+*.mobileprovision
+.env
+.env.*
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+.planning/
