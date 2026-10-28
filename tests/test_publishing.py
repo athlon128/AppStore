@@ -232,9 +232,11 @@ class PublicationFlowTests(unittest.TestCase):
             asset = Path(args[4])
             self.release["assets"] = [{"name": asset.name, "size": asset.stat().st_size,
                 "state": "uploaded", "digest": f"sha256:{pub.sha256(asset)}",
-                "browser_download_url": pub.download_url(args[3], asset.name)}]
+                "browser_download_url": f"https://github.com/{pub.REPO}/releases/download/untagged-fixture123/{asset.name}"}]
         elif args[1:3] == ["release", "edit"]:
             self.release.update(draft=False, published_at="2026-10-28T08:00:00Z")
+            for asset in self.release["assets"]:
+                asset["browser_download_url"] = pub.download_url(self.release["tag_name"], asset["name"])
         else:
             raise AssertionError(args)
         return ""
@@ -288,6 +290,26 @@ class PublicationFlowTests(unittest.TestCase):
     def test_resume_rejects_different_ipa(self):
         self.seed_release(wrong_digest=True)
         with self.assertRaisesRegex(pub.PublishError, "SHA-256"):
+            self.publish(resume=True)
+        self.assertEqual(self.raw_git("rev-parse", "HEAD"), self.initial_head)
+
+    def test_resume_draft_rechecks_final_tag_url_before_source_update(self):
+        self.seed_release()
+        self.release.update(draft=True, published_at=None)
+        asset = self.release["assets"][0]
+        asset["browser_download_url"] = f"https://github.com/{pub.REPO}/releases/download/untagged-fixture123/{asset['name']}"
+        self.publish(resume=True)
+        self.assertFalse(self.release["draft"])
+        version = validator.load_json(self.source_path)["apps"][0]["versions"][0]
+        self.assertEqual(version["downloadURL"], pub.download_url(self.release["tag_name"], asset["name"]))
+        self.assertNotIn("untagged-", version["downloadURL"])
+        self.assertFalse(any(call[1:3] == ("release", "upload") for call in self.calls))
+
+    def test_published_release_rejects_temporary_draft_url(self):
+        self.seed_release()
+        asset = self.release["assets"][0]
+        asset["browser_download_url"] = f"https://github.com/{pub.REPO}/releases/download/untagged-fixture123/{asset['name']}"
+        with self.assertRaisesRegex(pub.PublishError, "实际下载地址"):
             self.publish(resume=True)
         self.assertEqual(self.raw_git("rev-parse", "HEAD"), self.initial_head)
 

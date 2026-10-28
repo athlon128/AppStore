@@ -208,15 +208,22 @@ def verify_release(release, tag, asset_name, size, digest, temp):
     asset = assets[0]
     if asset.get("state") != "uploaded" or asset.get("size") != size:
         raise PublishError("Release Asset 尚未完整上传或字节大小不符")
-    if asset.get("browser_download_url") != download_url(tag, asset_name):
+    actual_url = asset.get("browser_download_url", "")
+    expected_url = download_url(tag, asset_name)
+    # GitHub gives draft assets an untagged-<id> URL before the tag is created
+    # on publication. Allow that exact repository/asset shape for drafts only;
+    # verify again after publishing and never put a draft URL in source.json.
+    temporary_draft_url = bool(release.get("draft") and re.fullmatch(
+        re.escape(f"https://github.com/{REPO}/releases/download/")
+        + r"untagged-[A-Za-z0-9-]+/" + re.escape(quote(asset_name, safe="")), actual_url))
+    if actual_url != expected_url and not temporary_draft_url:
         raise PublishError("Release Asset 的实际下载地址与预期版本地址不符")
     if asset.get("digest"):
         if asset["digest"] != f"sha256:{digest}":
             raise PublishError("Release IPA 的 SHA-256 与本地文件不一致，拒绝恢复/更新源")
     else:
         # Older GitHub assets may not have an API digest. Compare actual bytes.
-        verify_dir = temp / "verify-remote"
-        verify_dir.mkdir(exist_ok=True)
+        verify_dir = Path(tempfile.mkdtemp(prefix="verify-remote-", dir=temp))
         run(["gh", "release", "download", tag, "--repo", GH_REPO,
              "--pattern", asset_name, "--dir", verify_dir])
         if sha256(verify_dir / asset_name) != digest:
@@ -326,6 +333,7 @@ def publish(args):
                     release = api(endpoint)
                 if release.get("draft") or not release.get("published_at"):
                     raise PublishError("无法确认 Release 已公开发布，源文件未更新")
+                url = verify_release(release, tag, asset_name, meta["size"], digest, temp)
                 result = candidate_source(source, meta, args, release["published_at"], url)
                 ensure_clean(base)
                 if source_path.read_bytes() != original_bytes:
