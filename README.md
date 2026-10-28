@@ -13,6 +13,16 @@
 
 初始 `apps` 为空，表示尚未发布真实 IPA。Pages 是否可用以源地址实际返回 JSON、GitHub Actions 的部署结果为准；这里不将“文件已提交”视为“部署成功”，也不宣称任何 iPhone 安装已经验证。
 
+## 已发布：Fluvo 流序
+
+2026-10-28 首次发布 **0.1.0（构建 11）**，来自当前 Fluvo 开发工作区的真实 Release 归档，包含系统分享扩展。Bundle ID 为 `com.streamcatch.app`，最低 iOS 17.0，iPhoneOS / arm64。
+
+- [Release 与更新说明](https://github.com/athlon128/AppStore/releases/tag/com.streamcatch.app-v0.1.0-b11)
+- [下载 IPA](https://github.com/athlon128/AppStore/releases/download/com.streamcatch.app-v0.1.0-b11/com.streamcatch.app-0.1.0-11.ipa)
+- 大小：5,867,002 字节；SHA-256：`c4ac764673e65feacdc0ffd73f29f97725b2c4f625e3e5139f3b26df8065c38b`。
+
+此包采用 ad-hoc 签名保留主 App 和 `FluvoShare` 扩展的 App Group 声明，未包含开发者描述文件，必须由 SideStore 使用自己的账号重新签名安装。真机安装和分享功能尚未验收；若签名工具重映射 App Group，主 App、扩展的权限和自定义 `FluvoAppGroup` 值都必须指向同一个实际 Group。完整说明见 Release，应用开发源码不在此发布仓库中。
+
 ## Mac 环境准备
 
 需要 `git`、Python 3.10 或更新版本、`unzip` 和 GitHub CLI `gh`。发布工具只用 Python 标准库，不需要 pip 包。可先检查：
