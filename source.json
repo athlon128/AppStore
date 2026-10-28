@@ -2,6 +2,24 @@
   "name": "My Private Apps",
   "identifier": "com.athlon128.appstore",
   "sourceURL": "https://athlon128.github.io/AppStore/source.json",
-  "apps": [],
+  "apps": [
+    {
+      "name": "Fluvo 流序",
+      "bundleIdentifier": "com.streamcatch.app",
+      "developerName": "athlon128",
+      "localizedDescription": "Fluvo（流序）是一款原生 iOS 视频与图集下载器，支持 MP4/HLS、抖音与 X/Twitter 公开媒体解析、媒体库管理和系统分享链接导入。具体兼容范围以应用说明为准。",
+      "iconURL": "https://athlon128.github.io/AppStore/icons/Fluvo.png",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "date": "2026-10-28T08:16:38Z",
+          "localizedDescription": "Fluvo 流序 0.1.0（构建 11）\n\n- 使用 2026-10-28 当前开发工作区重新生成 iPhoneOS / arm64 Release IPA，最低 iOS 17.0。\n- 包含精简首页和 FluvoShare 系统分享扩展：接收 URL 或分享文案，保存后手动回到 Fluvo 导入解析；MP4/M3U8 下载仍需确认。\n- 保留 X/Twitter 视频与图集、网页备用解析及网站登录会话、抖音视频与图集、MP4/HLS、后台 AES-128、媒体库与批量删除功能。\n- 本次重新运行 66 项核心测试全部通过；Release Archive、ZIP CRC、arm64/iOS 平台、两个 bundle 的版本与 App Group、ad-hoc 签名验证通过。\n\n这是供 SideStore 重签名的 IPA：本机没有开发者签名证书，包内为 ad-hoc 签名，没有开发者描述文件，不能直接点击安装。通过 SideStore 使用自己的 Apple 账号重签名后安装。包内含一个分享扩展；安装时保留扩展才能使用系统分享。\n\n主 App：com.streamcatch.app；扩展：com.streamcatch.app.share；原始 App Group：group.com.streamcatch.app。SideStore/签名工具可能重映射 Bundle ID 和 App Group；主 App、扩展的权限及 FluvoAppGroup 配置必须指向同一实际 Group。此次未进行 iPhone 安装或真实签名后分享验收，不能以构建成功代表这些操作已通过。\n\nIPA 字节数：5867002\nSHA-256：c4ac764673e65feacdc0ffd73f29f97725b2c4f625e3e5139f3b26df8065c38b\n\n本 Release 的 Git Tag 指向独立发布仓库；应用开发源码未上传到此仓库。\n",
+          "downloadURL": "https://github.com/athlon128/AppStore/releases/download/com.streamcatch.app-v0.1.0-b11/com.streamcatch.app-0.1.0-11.ipa",
+          "size": 5867002,
+          "minOSVersion": "17.0"
+        }
+      ]
+    }
+  ],
   "news": []
 }
